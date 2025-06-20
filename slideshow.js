@@ -18,10 +18,14 @@ showBtn.addEventListener('click', function(){
     $(".slider-container").style.opacity = '1';
 })
 
+let timer
 window.onload = function(){
     $('.img-slider').classList.add('active')
     $('.page-slider').classList.add('active')
     $('.page-slider').style.backgroundColor = '#aaa';
+    timer = setInterval(()=>{
+        slideNext();
+    }, 3000);
 }
 
 function createSlider(sliderName, items, closeBtn = true, prevBtn = true, nextBtn = true ){
@@ -195,6 +199,17 @@ function createSlider(sliderName, items, closeBtn = true, prevBtn = true, nextBt
             }
         })
     }
+
+    // let timer;
+
+    sliderContainer.addEventListener('mouseleave', function(){
+        timer = setInterval(()=>{
+            slideNext();
+        }, 3000);
+    })
+    sliderContainer.addEventListener('mouseenter', function(){
+        clearTimeout(timer)
+    })
 }
 
 function slidePrevious(){
@@ -258,10 +273,5 @@ function slidePositionEnd(imgList, imgContainer, pageList, index){
     pageList[index].classList.add('active')
     pageList[index].style.backgroundColor = '#aaa';
 }
-
-
-setInterval(()=>{
-    slideNext();
-}, 5000);
 
 createSlider("slider",items)
