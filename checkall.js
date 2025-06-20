@@ -48,8 +48,16 @@ function createFormChecked(action, listContent){
         let listCheckbox = $$('.checkbox-item');
         let unCheckedItems = Array.from(listCheckbox).filter(element => element.checked === false);
 
-        if(unCheckedItems.length) checkAll.checked = false;
-        else checkAll.checked = true;
+        if(unCheckedItems.length === listCheckbox.length) {
+            checkAll.checked = false
+        }
+        if(unCheckedItems.length > 0 && unCheckedItems.length < listCheckbox.length){
+            checkAll.indeterminate = true;
+        }
+        if(unCheckedItems.length === 0){
+            checkAll.indeterminate = false;
+            checkAll.checked = true;
+        } 
     })
 
     document.body.appendChild(form)

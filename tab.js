@@ -79,7 +79,6 @@ function setTabStyle(item){
 function setContentStyle(items, itemsContent, index){
     items[index].classList.add("active");
     itemsContent[index].classList.add("active");
-    // itemsContent[index].style.display = "block";
     Object.assign(itemsContent[index].style, {
         'display' : 'block',
         'width' : '70%',

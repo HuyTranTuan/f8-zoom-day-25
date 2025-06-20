@@ -1,17 +1,8 @@
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
-
 const items = ['1.jpg','2.jpg','3.jpg','4.jpg','5.jpg','6.jpg','7.jpg']
+const showBtn = $('.btn-show-slider');
 
-const showBtn = document.createElement('button')
-showBtn.textContent = 'Show Slider';
-showBtn.style.fontSize = '20px';
-showBtn.style.border = '1px solid black';
-showBtn.style.padding = '5px 10px';
-showBtn.style.borderRadius = '5px';
-showBtn.style.backgroundColor = 'royalblue';
-showBtn.style.color = 'black';
-document.body.appendChild(showBtn);
 showBtn.addEventListener('mouseenter', function(){
     showBtn.style.backgroundColor = 'deepblue';
     showBtn.style.color = 'white';
@@ -27,8 +18,8 @@ showBtn.addEventListener('click', function(){
     $(".slider-container").style.opacity = '1';
 })
 
-
 window.onload = function(){
+    $('.img-slider').classList.add('active')
     $('.page-slider').classList.add('active')
     $('.page-slider').style.backgroundColor = '#aaa';
 }
@@ -67,6 +58,9 @@ function createSlider(sliderName, items, closeBtn = true, prevBtn = true, nextBt
         for(let i = 0; i< items.length; i++){
             let img = document.createElement('img')
             img.src = `./img/${items[i]}`;
+            if(i == 0){
+            }
+            img.classList = i==0 ? 'img-slider active' : 'img-slider';
             img.tabIndex = i;
             Object.assign(img.style, {
                 'min-width' : "100%",
@@ -138,8 +132,10 @@ function createSlider(sliderName, items, closeBtn = true, prevBtn = true, nextBt
                 $(".slider-container").style.opacity = '0';
             })
         }
+
         if(prevBtn){
             const prevBtnElement = document.createElement('button');
+            prevBtnElement.classList = 'prev-btn';
             Object.assign(prevBtnElement.style, {
                 'width' : "40px",
                 'height' : "40px",
@@ -150,14 +146,11 @@ function createSlider(sliderName, items, closeBtn = true, prevBtn = true, nextBt
                 "transform": "translateY(-50%)",
             })
             prevBtnElement.textContent = "<"
-            sliderContainer.appendChild(prevBtnElement)
-    
-            prevBtnElement.addEventListener("click", function(){
-                imgContainer.style.transform  = `translateX(0%)`;
-            })
+            sliderContainer.appendChild(prevBtnElement);
         }
         if(nextBtn){
             const nextBtnElement = document.createElement('button');
+            nextBtnElement.classList = 'next-btn';
             Object.assign(nextBtnElement.style, {
                 'width' : "40px",
                 'height' : "40px",
@@ -168,23 +161,92 @@ function createSlider(sliderName, items, closeBtn = true, prevBtn = true, nextBt
                 "transform": "translateY(-50%)",
             })
             nextBtnElement.textContent = ">"
-            sliderContainer.appendChild(nextBtnElement)
-            
-            nextBtnElement.addEventListener("click", function(){
-                
-                // $$('.page-slider').forEach(element => {
-                //     element.classList.remove('active')
-                //     element.style.backgroundColor = '#ddd';
-                // });
-                // imgContainer.style.transform  = `translateX(-${ * 100}%)`;
-            })
+            sliderContainer.appendChild(nextBtnElement);
         }
     }
 
-
-    
-
     document.body.appendChild(sliderContainer);
+
+    if(prevBtn){
+        const prevBtnElement = $('.prev-btn')
+        prevBtnElement.addEventListener("click", function(e){
+            slidePrevious()
+        })
+    }
+    
+    if(nextBtn){
+        const nextBtnElement = $('.next-btn')
+        nextBtnElement.addEventListener("click", function(e){
+            slideNext()
+        })
+    }
 }
+
+function slidePrevious(){
+    let imgContainer = $('.img-container')
+    let imgList = $$('.img-slider')
+    let pageList = $$('.page-slider')
+    let activePage = $('.page-slider.active')
+    let activeImg = $('.img-slider.active');
+    if(activeImg){
+        removeActiveClass(pageList, imgList);
+        if(activeImg.tabIndex === 0){
+            slidePositionEnd(imgList, imgContainer, pageList, imgList.length - 1)
+        } else {
+            slideActiveClass(activeImg, imgContainer, activePage, 'previous')
+        }
+    }
+}
+
+function slideNext(){
+    let imgContainer = $('.img-container')
+    let imgList = $$('.img-slider')
+    let activeImg = $('.img-slider.active');
+    let pageList = $$('.page-slider')
+    let activePage = $('.page-slider.active')
+    if(activeImg){
+        removeActiveClass(pageList, imgList);
+        if(activeImg.tabIndex === imgList.length - 1){
+            slidePositionEnd(imgList, imgContainer, pageList, 0)
+        } else {
+            slideActiveClass(activeImg, imgContainer, activePage, 'next')
+        }
+    }
+}
+
+function removeActiveClass(pageList, imgList){
+    pageList.forEach(element => {
+        element.classList.remove('active')
+        element.style.backgroundColor = '#ddd';
+    });
+    imgList.forEach(element => {
+        element.classList.remove('active')
+    });
+}
+
+function slideActiveClass(activeImg, imgContainer, activePage, status){
+    let actionStatus = status === 'next' ?activeImg.nextSibling : activeImg.previousSibling
+    let pageStatus = status === 'next' ?activePage.nextSibling : activePage.previousSibling
+    actionStatus.classList.add('active');
+    imgContainer.style.transform  = `translateX(-${(actionStatus.tabIndex) * 100}%)`
+
+    pageStatus.classList.add('active')
+    pageStatus.style.backgroundColor = '#aaa';
+}
+
+function slidePositionEnd(imgList, imgContainer, pageList, index){
+    imgList[index].classList.add('active');
+    imgContainer.style.transform  = index === 0
+        ? `translateX(${index})`
+        : `translateX(-${(imgList.length - 1) * 100}%)`;
+
+    pageList[index].classList.add('active')
+    pageList[index].style.backgroundColor = '#aaa';
+}
+
+
+setInterval(()=>{
+    slideNext();
+}, 5000);
 
 createSlider("slider",items)
