@@ -167,17 +167,32 @@ function createSlider(sliderName, items, closeBtn = true, prevBtn = true, nextBt
 
     document.body.appendChild(sliderContainer);
 
+    let lastClickTime = 0;
+    const clickInterval = 500; 
+
     if(prevBtn){
         const prevBtnElement = $('.prev-btn')
         prevBtnElement.addEventListener("click", function(e){
-            slidePrevious()
+            const currentTime = new Date().getTime(); 
+            if (currentTime - lastClickTime < clickInterval) {
+                console.log("wait!!!");
+            } else {
+                slidePrevious()
+                lastClickTime = currentTime;
+            }
         })
     }
     
     if(nextBtn){
         const nextBtnElement = $('.next-btn')
         nextBtnElement.addEventListener("click", function(e){
-            slideNext()
+            const currentTime = new Date().getTime(); 
+            if (currentTime - lastClickTime < clickInterval) {
+                console.log("wait!!!");
+            } else {
+                slideNext()
+                lastClickTime = currentTime;
+            }
         })
     }
 }
